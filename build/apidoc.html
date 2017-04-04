@@ -1,0 +1,330 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/SBoudrias/gulp-istanbul"
+
+    >gulp-istanbul (v1.1.1)</a>
+</h1>
+<h4>Istanbul unit test coverage plugin for gulp.</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.gulp-istanbul">module gulp-istanbul</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-istanbul.enforceThresholds">
+            function <span class="apidocSignatureSpan">gulp-istanbul.</span>enforceThresholds
+            <span class="apidocSignatureSpan">(opts)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-istanbul.hookRequire">
+            function <span class="apidocSignatureSpan">gulp-istanbul.</span>hookRequire
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-istanbul.summarizeCoverage">
+            function <span class="apidocSignatureSpan">gulp-istanbul.</span>summarizeCoverage
+            <span class="apidocSignatureSpan">(opts)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.gulp-istanbul.writeReports">
+            function <span class="apidocSignatureSpan">gulp-istanbul.</span>writeReports
+            <span class="apidocSignatureSpan">(opts)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.gulp-istanbul" id="apidoc.module.gulp-istanbul">module gulp-istanbul</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-istanbul.enforceThresholds" id="apidoc.element.gulp-istanbul.enforceThresholds">
+        function <span class="apidocSignatureSpan">gulp-istanbul.</span>enforceThresholds
+        <span class="apidocSignatureSpan">(opts)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">enforceThresholds = function (opts) {
+  opts = opts || {};
+  opts = _.defaults(opts, {
+    coverageVariable: COVERAGE_VARIABLE
+  });
+
+  var cover = through();
+
+  cover.on(&#x27;end&#x27;, function () {
+    var collector = new Collector();
+
+    // Revert to an object if there are no macthing source files.
+    collector.add(global[opts.coverageVariable] || {});
+
+    var results = checker.checkFailures(opts.thresholds, collector.getFinalCoverage());
+    var criteria = function(type) {
+      return (type.global &#x26;&#x26; type.global.failed) || (type.each &#x26;&#x26; type.each.failed);
+    };
+
+    if (_.some(results, criteria)) {
+      this.emit(&#x27;error&#x27;, new PluginError({
+        plugin: PLUGIN_NAME,
+        message: &#x27;Coverage failed&#x27;
+      }));
+    }
+
+  }).resume();
+
+  return cover;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
+  return gulp.src([&#x27;test/*.js&#x27;])
+    .pipe(mocha())
+    // Creating the reports after tests ran
+    .pipe(istanbul.writeReports())
+    // Enforce a coverage of at least 90%
+    .pipe(istanbul.<span class="apidocCodeKeywordSpan">enforceThresholds</span>({ thresholds: { global: 90 } }));
+});
+```
+
+#### Browser testing
+
+For browser testing, you&#x27;ll need to write the files covered by istanbul in a directory from where you&#x27;ll serve these files
+ to the browser running the test. You&#x27;ll also need a way to extract the value of the [coverage variable](#coveragevariable)
+after the test have runned in the browser.
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-istanbul.hookRequire" id="apidoc.element.gulp-istanbul.hookRequire">
+        function <span class="apidocSignatureSpan">gulp-istanbul.</span>hookRequire
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">hookRequire = function (options) {
+  var fileMap = {};
+
+  istanbul.hook.unhookRequire();
+  istanbul.hook.hookRequire(function (path) {
+    return !!fileMap[normalizePathSep(path)];
+  }, function (code, path) {
+    return fileMap[normalizePathSep(path)];
+  }, options);
+
+  return through(function (file, enc, cb) {
+    // If the file is already required, delete it from the cache otherwise the covered
+    // version will be ignored.
+    delete require.cache[path.resolve(file.path)];
+    fileMap[normalizePathSep(file.path)] = file.contents.toString();
+    return cb();
+  });
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+var mocha = require(&#x27;gulp-mocha&#x27;);
+
+gulp.task(&#x27;pre-test&#x27;, function () {
+return gulp.src([&#x27;lib/**/*.js&#x27;])
+  // Covering files
+  .pipe(istanbul())
+  // Force `require` to return covered files
+  .pipe(istanbul.<span class="apidocCodeKeywordSpan">hookRequire</span>());
+});
+
+gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
+return gulp.src([&#x27;test/*.js&#x27;])
+  .pipe(mocha())
+  // Creating the reports after tests ran
+  .pipe(istanbul.writeReports())
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-istanbul.summarizeCoverage" id="apidoc.element.gulp-istanbul.summarizeCoverage">
+        function <span class="apidocSignatureSpan">gulp-istanbul.</span>summarizeCoverage
+        <span class="apidocSignatureSpan">(opts)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">summarizeCoverage = function (opts) {
+  opts = opts || {};
+  if (!opts.coverageVariable) opts.coverageVariable = COVERAGE_VARIABLE;
+
+  if (!global[opts.coverageVariable]) throw new Error(&#x27;no coverage data found, run tests before calling `summarizeCoverage`&#x27;);
+
+  var collector = new Collector();
+  collector.add(global[opts.coverageVariable]);
+  return istanbul.utils.summarizeCoverage(collector.getFinalCoverage());
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+### istanbul.hookRequire()
+
+Overwrite `require` so it returns the covered files. The method take an optional [option object](https://gotwarlost.github.io/istanbul
+/public/apidocs/classes/Hook.html#method_hookRequire).
+
+Always use this option if you&#x27;re running tests in Node.js
+
+### istanbul.<span class="apidocCodeKeywordSpan">summarizeCoverage</span>(opt)
+
+get coverage summary details
+
+#### opt
+Type: `Object` (optional)
+```js
+{
+...</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.gulp-istanbul.writeReports" id="apidoc.element.gulp-istanbul.writeReports">
+        function <span class="apidocSignatureSpan">gulp-istanbul.</span>writeReports
+        <span class="apidocSignatureSpan">(opts)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">writeReports = function (opts) {
+  if (typeof opts === &#x27;string&#x27;) opts = { dir: opts };
+  opts = opts || {};
+
+  var defaultDir = path.join(process.cwd(), &#x27;coverage&#x27;);
+  opts = _.defaultsDeep(opts, {
+    coverageVariable: COVERAGE_VARIABLE,
+    dir: defaultDir,
+    reportOpts: {
+      dir: opts.dir || defaultDir
+    }
+  });
+  opts.reporters = opts.reporters || [ &#x27;lcov&#x27;, &#x27;json&#x27;, &#x27;text&#x27;, &#x27;text-summary&#x27; ];
+
+  var reporters = opts.reporters.map(function(reporter) {
+    if (reporter.TYPE) Report.register(reporter);
+    return reporter.TYPE || reporter;
+  });
+
+  var invalid = _.difference(reporters, Report.getReportList());
+  if (invalid.length) {
+    // throw before we start -- fail fast
+    throw new PluginError(PLUGIN_NAME, &#x27;Invalid reporters: &#x27; + invalid.join(&#x27;, &#x27;));
+  }
+
+  reporters = reporters.map(function (r) {
+    var reportOpts = opts.reportOpts[r] || opts.reportOpts;
+    return Report.create(r, _.clone(reportOpts));
+  });
+
+  var cover = through();
+
+  cover.on(&#x27;end&#x27;, function () {
+    var collector = new Collector();
+
+    // Revert to an object if there are no matching source files.
+    collector.add(global[opts.coverageVariable] || {});
+
+    reporters.forEach(function (report) {
+      report.writeReport(collector, true);
+    });
+  }).resume();
+
+  return cover;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+    .pipe(istanbul.hookRequire());
+});
+
+gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
+  return gulp.src([&#x27;test/*.js&#x27;])
+    .pipe(mocha())
+    // Creating the reports after tests ran
+    .pipe(istanbul.<span class="apidocCodeKeywordSpan">writeReports</span>())
+    // Enforce a coverage of at least 90%
+    .pipe(istanbul.enforceThresholds({ thresholds: { global: 90 } }));
+});
+```
+
+#### Browser testing
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
