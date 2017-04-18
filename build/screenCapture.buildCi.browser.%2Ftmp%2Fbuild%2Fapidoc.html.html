@@ -1,4 +1,4 @@
-<div class="apidocDiv">
+<html><head></head><body><div class="apidocDiv">
 <style>
 /*csslint
 */
@@ -47,17 +47,10 @@
 }
 </style>
 <h1>api documentation for
-    <a
-
-        href="https://github.com/SBoudrias/gulp-istanbul"
-
-    >gulp-istanbul (v1.1.1)</a>
+    <a href="https://github.com/SBoudrias/gulp-istanbul">gulp-istanbul (v1.1.1)</a>
 </h1>
 <h4>Istanbul unit test coverage plugin for gulp.</h4>
-<div class="apidocSectionDiv"><a
-    href="#apidoc.tableOfContents"
-    id="apidoc.tableOfContents"
-><h1>table of contents</h1></a><ol>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
 
     <li class="apidocModuleLi"><a href="#apidoc.module.gulp-istanbul">module gulp-istanbul</a><ol>
 
@@ -222,7 +215,7 @@
 
     cb = _.once(cb);
     if (!(file.contents instanceof Buffer)) {
-      return cb(new PluginError(PLUGIN_NAME, &#x27;streams not supported&#x27;));
+      return cb(new PluginError(PLUGIN_NAME, 'streams not supported'));
     }
 
     var filepath = normalizePathSep(file.path);
@@ -230,7 +223,7 @@
       if (err) {
         return cb(new PluginError(
           PLUGIN_NAME,
-          &#x27;Unable to parse &#x27; + filepath + &#x27;\n\n&#x27; + err.message + &#x27;\n&#x27;
+          'Unable to parse ' + filepath + '\n\n' + err.message + '\n'
         ));
       }
 
@@ -247,7 +240,7 @@
       // https://github.com/gotwarlost/istanbul/issues/112
       if (opts.includeUntested) {
         var instrumentedSrc = file.contents.toString();
-        var covStubRE = /\{.*&#x22;path&#x22;.*&#x22;fnMap&#x22;.*&#x22;statementMap&#x22;.*&#x22;branchMap&#x22;.*\}/g;
+        var covStubRE = /\{.*"path".*"fnMap".*"statementMap".*"branchMap".*\}/g;
         var covStubMatch = covStubRE.exec(instrumentedSrc);
         if (covStubMatch !== null) {
           var covStub = JSON.parse(covStubMatch[0]);
@@ -280,7 +273,7 @@
 
   var cover = through();
 
-  cover.on(&#x27;end&#x27;, function () {
+  cover.on('end', function () {
     var collector = new Collector();
 
     // Revert to an object if there are no macthing source files.
@@ -288,13 +281,13 @@
 
     var results = checker.checkFailures(opts.thresholds, collector.getFinalCoverage());
     var criteria = function(type) {
-      return (type.global &#x26;&#x26; type.global.failed) || (type.each &#x26;&#x26; type.each.failed);
+      return (type.global &amp;&amp; type.global.failed) || (type.each &amp;&amp; type.each.failed);
     };
 
     if (_.some(results, criteria)) {
-      this.emit(&#x27;error&#x27;, new PluginError({
+      this.emit('error', new PluginError({
         plugin: PLUGIN_NAME,
-        message: &#x27;Coverage failed&#x27;
+        message: 'Coverage failed'
       }));
     }
 
@@ -304,8 +297,8 @@
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
 
-gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
-  return gulp.src([&#x27;test/*.js&#x27;])
+gulp.task('test', ['pre-test'], function () {
+  return gulp.src(['test/*.js'])
     .pipe(mocha())
     // Creating the reports after tests ran
     .pipe(istanbul.writeReports())
@@ -316,8 +309,8 @@ gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
 
 #### Browser testing
 
-For browser testing, you&#x27;ll need to write the files covered by istanbul in a directory from where you&#x27;ll serve these files
- to the browser running the test. You&#x27;ll also need a way to extract the value of the [coverage variable](#coveragevariable)
+For browser testing, you'll need to write the files covered by istanbul in a directory from where you'll serve these files
+ to the browser running the test. You'll also need a way to extract the value of the [coverage variable](#coveragevariable)
 after the test have runned in the browser.
 ...</pre></li>
     </ul>
@@ -350,18 +343,18 @@ after the test have runned in the browser.
   });
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-var mocha = require(&#x27;gulp-mocha&#x27;);
+var mocha = require('gulp-mocha');
 
-gulp.task(&#x27;pre-test&#x27;, function () {
-return gulp.src([&#x27;lib/**/*.js&#x27;])
+gulp.task('pre-test', function () {
+return gulp.src(['lib/**/*.js'])
   // Covering files
   .pipe(istanbul())
   // Force `require` to return covered files
   .pipe(istanbul.<span class="apidocCodeKeywordSpan">hookRequire</span>());
 });
 
-gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
-return gulp.src([&#x27;test/*.js&#x27;])
+gulp.task('test', ['pre-test'], function () {
+return gulp.src(['test/*.js'])
   .pipe(mocha())
   // Creating the reports after tests ran
   .pipe(istanbul.writeReports())
@@ -381,7 +374,7 @@ return gulp.src([&#x27;test/*.js&#x27;])
   opts = opts || {};
   if (!opts.coverageVariable) opts.coverageVariable = COVERAGE_VARIABLE;
 
-  if (!global[opts.coverageVariable]) throw new Error(&#x27;no coverage data found, run tests before calling `summarizeCoverage`&#x27;);
+  if (!global[opts.coverageVariable]) throw new Error('no coverage data found, run tests before calling `summarizeCoverage`');
 
   var collector = new Collector();
   collector.add(global[opts.coverageVariable]);
@@ -394,7 +387,7 @@ return gulp.src([&#x27;test/*.js&#x27;])
 Overwrite `require` so it returns the covered files. The method take an optional [option object](https://gotwarlost.github.io/istanbul
 /public/apidocs/classes/Hook.html#method_hookRequire).
 
-Always use this option if you&#x27;re running tests in Node.js
+Always use this option if you're running tests in Node.js
 
 ### istanbul.<span class="apidocCodeKeywordSpan">summarizeCoverage</span>(opt)
 
@@ -448,10 +441,10 @@ if (file.sourceMap) {
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">writeReports = function (opts) {
-  if (typeof opts === &#x27;string&#x27;) opts = { dir: opts };
+  if (typeof opts === 'string') opts = { dir: opts };
   opts = opts || {};
 
-  var defaultDir = path.join(process.cwd(), &#x27;coverage&#x27;);
+  var defaultDir = path.join(process.cwd(), 'coverage');
   opts = _.defaultsDeep(opts, {
     coverageVariable: COVERAGE_VARIABLE,
     dir: defaultDir,
@@ -459,7 +452,7 @@ if (file.sourceMap) {
       dir: opts.dir || defaultDir
     }
   });
-  opts.reporters = opts.reporters || [ &#x27;lcov&#x27;, &#x27;json&#x27;, &#x27;text&#x27;, &#x27;text-summary&#x27; ];
+  opts.reporters = opts.reporters || [ 'lcov', 'json', 'text', 'text-summary' ];
 
   var reporters = opts.reporters.map(function(reporter) {
     if (reporter.TYPE) Report.register(reporter);
@@ -469,7 +462,7 @@ if (file.sourceMap) {
   var invalid = _.difference(reporters, Report.getReportList());
   if (invalid.length) {
     // throw before we start -- fail fast
-    throw new PluginError(PLUGIN_NAME, &#x27;Invalid reporters: &#x27; + invalid.join(&#x27;, &#x27;));
+    throw new PluginError(PLUGIN_NAME, 'Invalid reporters: ' + invalid.join(', '));
   }
 
   reporters = reporters.map(function (r) {
@@ -479,7 +472,7 @@ if (file.sourceMap) {
 
   var cover = through();
 
-  cover.on(&#x27;end&#x27;, function () {
+  cover.on('end', function () {
     var collector = new Collector();
 
     // Revert to an object if there are no matching source files.
@@ -496,8 +489,8 @@ if (file.sourceMap) {
     .pipe(istanbul.hookRequire());
 });
 
-gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
-  return gulp.src([&#x27;test/*.js&#x27;])
+gulp.task('test', ['pre-test'], function () {
+  return gulp.src(['test/*.js'])
     .pipe(mocha())
     // Creating the reports after tests ran
     .pipe(istanbul.<span class="apidocCodeKeywordSpan">writeReports</span>())
@@ -532,7 +525,7 @@ gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
 
   var cover = through();
 
-  cover.on(&#x27;end&#x27;, function () {
+  cover.on('end', function () {
     var collector = new Collector();
 
     // Revert to an object if there are no macthing source files.
@@ -540,13 +533,13 @@ gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
 
     var results = checker.checkFailures(opts.thresholds, collector.getFinalCoverage());
     var criteria = function(type) {
-      return (type.global &#x26;&#x26; type.global.failed) || (type.each &#x26;&#x26; type.each.failed);
+      return (type.global &amp;&amp; type.global.failed) || (type.each &amp;&amp; type.each.failed);
     };
 
     if (_.some(results, criteria)) {
-      this.emit(&#x27;error&#x27;, new PluginError({
+      this.emit('error', new PluginError({
         plugin: PLUGIN_NAME,
-        message: &#x27;Coverage failed&#x27;
+        message: 'Coverage failed'
       }));
     }
 
@@ -556,8 +549,8 @@ gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
 
-gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
-  return gulp.src([&#x27;test/*.js&#x27;])
+gulp.task('test', ['pre-test'], function () {
+  return gulp.src(['test/*.js'])
     .pipe(mocha())
     // Creating the reports after tests ran
     .pipe(istanbul.writeReports())
@@ -568,8 +561,8 @@ gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
 
 #### Browser testing
 
-For browser testing, you&#x27;ll need to write the files covered by istanbul in a directory from where you&#x27;ll serve these files
- to the browser running the test. You&#x27;ll also need a way to extract the value of the [coverage variable](#coveragevariable)
+For browser testing, you'll need to write the files covered by istanbul in a directory from where you'll serve these files
+ to the browser running the test. You'll also need a way to extract the value of the [coverage variable](#coveragevariable)
 after the test have runned in the browser.
 ...</pre></li>
     </ul>
@@ -607,18 +600,18 @@ after the test have runned in the browser.
   });
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-var mocha = require(&#x27;gulp-mocha&#x27;);
+var mocha = require('gulp-mocha');
 
-gulp.task(&#x27;pre-test&#x27;, function () {
-return gulp.src([&#x27;lib/**/*.js&#x27;])
+gulp.task('pre-test', function () {
+return gulp.src(['lib/**/*.js'])
   // Covering files
   .pipe(istanbul())
   // Force `require` to return covered files
   .pipe(istanbul.<span class="apidocCodeKeywordSpan">hookRequire</span>());
 });
 
-gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
-return gulp.src([&#x27;test/*.js&#x27;])
+gulp.task('test', ['pre-test'], function () {
+return gulp.src(['test/*.js'])
   .pipe(mocha())
   // Creating the reports after tests ran
   .pipe(istanbul.writeReports())
@@ -643,7 +636,7 @@ return gulp.src([&#x27;test/*.js&#x27;])
   opts = opts || {};
   if (!opts.coverageVariable) opts.coverageVariable = COVERAGE_VARIABLE;
 
-  if (!global[opts.coverageVariable]) throw new Error(&#x27;no coverage data found, run tests before calling `summarizeCoverage`&#x27;);
+  if (!global[opts.coverageVariable]) throw new Error('no coverage data found, run tests before calling `summarizeCoverage`');
 
   var collector = new Collector();
   collector.add(global[opts.coverageVariable]);
@@ -656,7 +649,7 @@ return gulp.src([&#x27;test/*.js&#x27;])
 Overwrite `require` so it returns the covered files. The method take an optional [option object](https://gotwarlost.github.io/istanbul
 /public/apidocs/classes/Hook.html#method_hookRequire).
 
-Always use this option if you&#x27;re running tests in Node.js
+Always use this option if you're running tests in Node.js
 
 ### istanbul.<span class="apidocCodeKeywordSpan">summarizeCoverage</span>(opt)
 
@@ -718,10 +711,10 @@ if (file.sourceMap) {
     </h2>
     <ul>
     <li>description and source-code<pre class="apidocCodePre">writeReports = function (opts) {
-  if (typeof opts === &#x27;string&#x27;) opts = { dir: opts };
+  if (typeof opts === 'string') opts = { dir: opts };
   opts = opts || {};
 
-  var defaultDir = path.join(process.cwd(), &#x27;coverage&#x27;);
+  var defaultDir = path.join(process.cwd(), 'coverage');
   opts = _.defaultsDeep(opts, {
     coverageVariable: COVERAGE_VARIABLE,
     dir: defaultDir,
@@ -729,7 +722,7 @@ if (file.sourceMap) {
       dir: opts.dir || defaultDir
     }
   });
-  opts.reporters = opts.reporters || [ &#x27;lcov&#x27;, &#x27;json&#x27;, &#x27;text&#x27;, &#x27;text-summary&#x27; ];
+  opts.reporters = opts.reporters || [ 'lcov', 'json', 'text', 'text-summary' ];
 
   var reporters = opts.reporters.map(function(reporter) {
     if (reporter.TYPE) Report.register(reporter);
@@ -739,7 +732,7 @@ if (file.sourceMap) {
   var invalid = _.difference(reporters, Report.getReportList());
   if (invalid.length) {
     // throw before we start -- fail fast
-    throw new PluginError(PLUGIN_NAME, &#x27;Invalid reporters: &#x27; + invalid.join(&#x27;, &#x27;));
+    throw new PluginError(PLUGIN_NAME, 'Invalid reporters: ' + invalid.join(', '));
   }
 
   reporters = reporters.map(function (r) {
@@ -749,7 +742,7 @@ if (file.sourceMap) {
 
   var cover = through();
 
-  cover.on(&#x27;end&#x27;, function () {
+  cover.on('end', function () {
     var collector = new Collector();
 
     // Revert to an object if there are no matching source files.
@@ -766,8 +759,8 @@ if (file.sourceMap) {
     .pipe(istanbul.hookRequire());
 });
 
-gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
-  return gulp.src([&#x27;test/*.js&#x27;])
+gulp.task('test', ['pre-test'], function () {
+  return gulp.src(['test/*.js'])
     .pipe(mocha())
     // Creating the reports after tests ran
     .pipe(istanbul.<span class="apidocCodeKeywordSpan">writeReports</span>())
@@ -789,3 +782,4 @@ gulp.task(&#x27;test&#x27;, [&#x27;pre-test&#x27;], function () {
     ]
 </div>
 </div>
+</body></html>
