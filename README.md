@@ -1,6 +1,6 @@
 # npmdoc-gulp-istanbul
 
-#### api documentation for  [gulp-istanbul (v1.1.1)](https://github.com/SBoudrias/gulp-istanbul)  [![npm package](https://img.shields.io/npm/v/npmdoc-gulp-istanbul.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-gulp-istanbul) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-gulp-istanbul.svg)](https://travis-ci.org/npmdoc/node-npmdoc-gulp-istanbul)
+#### basic api documentation for  [gulp-istanbul (v1.1.1)](https://github.com/SBoudrias/gulp-istanbul)  [![npm package](https://img.shields.io/npm/v/npmdoc-gulp-istanbul.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-gulp-istanbul) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-gulp-istanbul.svg)](https://travis-ci.org/npmdoc/node-npmdoc-gulp-istanbul)
 
 #### Istanbul unit test coverage plugin for gulp.
 
@@ -79,7 +79,8 @@
         "pretest": "jshint index.js ./test/.",
         "test": "mocha -R spec"
     },
-    "version": "1.1.1"
+    "version": "1.1.1",
+    "bin": {}
 }
 ```
 
